@@ -1,3 +1,24 @@
+def mostrar_resultados(encontrados): #Funcion hecha para revisar y exponer por los filtros. Ordena los resultados y los imprime mas adecuadamente.  
+    if encontrados:
+        print("\nVuelos encontrados:")
+        for vuelo in encontrados:
+            fecha = vuelo[1]
+            origen = vuelo[2]
+            destino = vuelo[3]
+            aerolinea = vuelo[6]
+            precio = vuelo[7]
+            print(f"- Aerolínea: {aerolinea}, Fecha: {fecha}, Origen: {origen}, Destino: {destino}, Precio: ${precio}")
+    else:
+        print("\nNo se encontraron vuelos con ese criterio.") #El salto de linea \n* da mejor visualizacion del mensaje impreso.
+    input("\nPresione Enter para volver al menú principal")
+
+def pedir_entero_positivo(mensaje):#funcion hecha para validar entrada en precios que sea en numeros y que sea mayor que 0
+    while True:
+        entrada = input(mensaje).strip()
+        if entrada.isdigit() and int(entrada) > 0:
+            return int(entrada)
+        print("Debe ingresar un número válido mayor que cero.")
+
 print("\n""+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
 print("|              BIENVENIDO A LOOK&FLY                |")
 print("|            Tu buscador de vuelos confiable             |")
@@ -210,112 +231,93 @@ while bandera:
 
     #Modo busqueda (Hay que hacer una funcion para conectar me parece o algo para que logre conectar esta parte del codigo)
     if opcion==2:
-        bandera=True
         vuelos = []
         opcion_busqueda = 0
         encontrados = []
     #Lectura de datos del archivo vuelos.
 
-with open('vuelos.txt', 'r', encoding='utf-8') as archivo: #Con el with as, a diferencia del otro modo como el propuesto por el profesor, el codigo queda mas limpio y no hay necesidad de usar el close, es una manera muy segura de usar esta funcion.
-    for linea in archivo:
-        datos = linea.strip().split(',')
-        vuelos.append(datos) #hace que el archivo se convierta en lista de listas para asi poder trabajar de manera adecuada. 
-
-def mostrar_resultados(encontrados): #Funcion hecha para revisar y exponer por los filtros. Ordena los resultados y los imprime mas adecuadamente.  
-    if encontrados:
-        print("\nVuelos encontrados:")
-        for vuelo in encontrados:
-            fecha = vuelo[1]
-            origen = vuelo[2]
-            destino = vuelo[3]
-            aerolinea = vuelo[6]
-            precio = vuelo[7]
-            print(f"- Aerolínea: {aerolinea}, Fecha: {fecha}, Origen: {origen}, Destino: {destino}, Precio: ${precio}")
-    else:
-        print("\nNo se encontraron vuelos con ese criterio.") #El salto de linea \n* da mejor visualizacion del mensaje impreso.
-    input("\nPresione Enter para volver al menú principal")
-
-def pedir_entero_positivo(mensaje):#funcion hecha para validar entrada en precios que sea en numeros y que sea mayor que 0
-    while True:
-        entrada = input(mensaje).strip()
-        if entrada.isdigit() and int(entrada) > 0:
-            return int(entrada)
-        print("Debe ingresar un número válido mayor que cero.")
-
-# Modo búsqueda ya con el menu
-bandera = True
-while bandera:
-    opcion_busqueda = 0
-    while opcion_busqueda < 1 or opcion_busqueda > 6: #Con esto validamos que efectivamente sea alguna de las opciones y no se nos vaya a un ciclo sin fin o nos de cualquier otra cosa. 
-        print("*********************************************************")
-        print("Bienvenido al modo búsqueda")
-        print("*********************************************************")
-        print("1. Buscar por fecha de vuelo")
-        print("2. Buscar por aerolínea")
-        print("3. Buscar por lugar de origen")
-        print("4. Buscar por lugar de destino")
-        print("5. Buscar vuelos por precio máximo")
-        print("6. Menú principal")
-        print("*********************************************************")
-        entrada = input("Ingrese la opción que desee: ").strip() #Los strip son muy utiles para ingresar datos ya que elimina espacios de linea innecesarios. Creo que seria bien agregarlo a todas las partes donde se necesite. 
-        if entrada in ["1", "2", "3", "4", "5", "6"]: #El in* es sumamente util para verificar entradas en una lista. 
-            opcion_busqueda = int(entrada)
-        else:
-            print("Opción inválida. Intente de nuevo.")
-
-    if opcion_busqueda == 1:
-        fecha = "" #cadena vacia para llenar con resultados
-        while not (len(fecha) == 10 and fecha[2] == "/" and fecha[5] == "/" and fecha.replace("/", "").isdigit()): #Mientras la fecha no cumpla con ese formato, seguir pidiendo al usuario que la ingrese (mantiene el ciclo)
-            #el .replace y el .isdigit son muy utiles para validar. En el sentido que el .replace lo que hace es reemplazar digitos de una cadena y el .isdigit validar que efectivamente sean numeros. Esto elimina muchas funciones necesarias para validacion 
-        #cadena.replace("A", "B") y cadena.isdigit() (devuelve T o F)
- 
-            fecha = input("Ingrese la fecha de vuelo (DD/MM/AAAA): ").strip()
-            if not (len(fecha) == 10 and fecha[2] == "/" and fecha[5] == "/" and fecha.replace("/", "").isdigit()): #El not* en cada una de estas lo que hace es hacer lo mismo que conocemos del while, if, y casi que cualquier palabra reservada pero al contrario. 
-                print("Formato inválido. Intente nuevamente.") #Validacion de que la fecha este bien realmente y si no arroja error. 
-        encontrados = [v for v in vuelos if v[1] == fecha]
-        mostrar_resultados(encontrados)
-
-    elif opcion_busqueda == 2: #Busqueda aerolinea pero por ID no por nombre
-        aerolinea = ""#lista vacia
-        while aerolinea == "":
-            aerolinea = input("Ingrese el nombre de la aerolínea: ").strip().lower()#Cada strip lover lo que hace es que si seingresa un valor con minusculas, tambien va a ser acpetado
-            if aerolinea == "":
-                print("Debe ingresar un nombre válido.")
-        encontrados = [v for v in vuelos if v[6].strip().lower() == aerolinea]
-        mostrar_resultados(encontrados)
-
-    elif opcion_busqueda == 3: #Busqueda por ciudad de origen
-        origen = ""
-        while origen == "":
-            origen = input("Ingrese la ciudad de origen: ").strip().lower()
-            if origen == "":
-                print("Debe ingresar una ciudad válida.")
-        encontrados = [v for v in vuelos if v[2].strip().lower() == origen]
-        mostrar_resultados(encontrados)
-
-    elif opcion_busqueda == 4: #Busqueda por ciudad de destino
-        destino = ""
-        while destino == "":
-            destino = input("Ingrese la ciudad de destino: ").strip().lower()
-            if destino == "":
-                print("Debe ingresar una ciudad válida.")
-        encontrados = [v for v in vuelos if v[3].strip().lower() == destino]
-        mostrar_resultados(encontrados) 
-
-    elif opcion_busqueda == 5:  # Busqueda por precio
-        precio_max = pedir_entero_positivo("Ingrese el precio máximo: ")
-        encontrados = [v for v in vuelos if v[7].isdigit() and int(v[7]) <= precio_max]
-        mostrar_resultados(encontrados)
+        with open('vuelos.txt', 'r', encoding='utf-8') as archivo: #Con el with as, a diferencia del otro modo como el propuesto por el profesor, el codigo queda mas limpio y no hay necesidad de usar el close, es una manera muy segura de usar esta funcion.
+            for linea in archivo:
+                datos = linea.strip().split(',')
+                vuelos.append(datos) #hace que el archivo se convierta en lista de listas para asi poder trabajar de manera adecuada. 
 
 
-    elif opcion_busqueda == 6:
-        bandera = False  # Volver al menu principal
+
+        # Modo búsqueda ya con el menu
+        bandera = True
+        while bandera:
+            opcion_busqueda = 0
+            while opcion_busqueda < 1 or opcion_busqueda > 6: #Con esto validamos que efectivamente sea alguna de las opciones y no se nos vaya a un ciclo sin fin o nos de cualquier otra cosa. 
+                print("*********************************************************")
+                print("Bienvenido al modo búsqueda")
+                print("*********************************************************")
+                print("1. Buscar por fecha de vuelo")
+                print("2. Buscar por aerolínea")
+                print("3. Buscar por lugar de origen")
+                print("4. Buscar por lugar de destino")
+                print("5. Buscar vuelos por precio máximo")
+                print("6. Menú principal")
+                print("*********************************************************")
+                entrada = input("Ingrese la opción que desee: ").strip() #Los strip son muy utiles para ingresar datos ya que elimina espacios de linea innecesarios. Creo que seria bien agregarlo a todas las partes donde se necesite. 
+                if entrada in ["1", "2", "3", "4", "5", "6"]: #El in* es sumamente util para verificar entradas en una lista. 
+                    opcion_busqueda = int(entrada)
+                else:
+                    print("Opción inválida. Intente de nuevo.")
+
+            if opcion_busqueda == 1:
+                fecha = "" #cadena vacia para llenar con resultados
+                while not (len(fecha) == 10 and fecha[2] == "/" and fecha[5] == "/" and fecha.replace("/", "").isdigit()): #Mientras la fecha no cumpla con ese formato, seguir pidiendo al usuario que la ingrese (mantiene el ciclo)
+                    #el .replace y el .isdigit son muy utiles para validar. En el sentido que el .replace lo que hace es reemplazar digitos de una cadena y el .isdigit validar que efectivamente sean numeros. Esto elimina muchas funciones necesarias para validacion 
+                #cadena.replace("A", "B") y cadena.isdigit() (devuelve T o F)
+
+                    fecha = input("Ingrese la fecha de vuelo (DD/MM/AAAA): ").strip()
+                    if not (len(fecha) == 10 and fecha[2] == "/" and fecha[5] == "/" and fecha.replace("/", "").isdigit()): #El not* en cada una de estas lo que hace es hacer lo mismo que conocemos del while, if, y casi que cualquier palabra reservada pero al contrario. 
+                        print("Formato inválido. Intente nuevamente.") #Validacion de que la fecha este bien realmente y si no arroja error. 
+                encontrados = [v for v in vuelos if v[1] == fecha]
+                mostrar_resultados(encontrados)
+
+            elif opcion_busqueda == 2: #Busqueda aerolinea pero por ID no por nombre
+                aerolinea = ""#lista vacia
+                while aerolinea == "":
+                    aerolinea = input("Ingrese el nombre de la aerolínea: ").strip().lower()#Cada strip lover lo que hace es que si seingresa un valor con minusculas, tambien va a ser acpetado
+                    if aerolinea == "":
+                        print("Debe ingresar un nombre válido.")
+                encontrados = [v for v in vuelos if v[6].strip().lower() == aerolinea]
+                mostrar_resultados(encontrados)
+
+            elif opcion_busqueda == 3: #Busqueda por ciudad de origen
+                origen = ""
+                while origen == "":
+                    origen = input("Ingrese la ciudad de origen: ").strip().lower()
+                    if origen == "":
+                        print("Debe ingresar una ciudad válida.")
+                encontrados = [v for v in vuelos if v[2].strip().lower() == origen]
+                mostrar_resultados(encontrados)
+
+            elif opcion_busqueda == 4: #Busqueda por ciudad de destino
+                destino = ""
+                while destino == "":
+                    destino = input("Ingrese la ciudad de destino: ").strip().lower()
+                    if destino == "":
+                        print("Debe ingresar una ciudad válida.")
+                encontrados = [v for v in vuelos if v[3].strip().lower() == destino]
+                mostrar_resultados(encontrados) 
+
+            elif opcion_busqueda == 5:  # Busqueda por precio
+                precio_max = pedir_entero_positivo("Ingrese el precio máximo: ")
+                encontrados = [v for v in vuelos if v[7].isdigit() and int(v[7]) <= precio_max]
+                mostrar_resultados(encontrados)
 
 
-#Hay que mejorar esta parte porque igual imprime todo y no deberia. 
-    if opcion==3:
-        print ("Muchas gracias por confiar en Look&Fly, lo esperamos pronto")
-        bandera= False
-        
+            elif opcion_busqueda == 6:
+                bandera = False  # Volver al menu principal
 
-    
+
+        #Hay que mejorar esta parte porque igual imprime todo y no deberia. 
+            if opcion==3:
+                print ("Muchas gracias por confiar en Look&Fly, lo esperamos pronto")
+                bandera= False
+        bandera= True
+
+
+
